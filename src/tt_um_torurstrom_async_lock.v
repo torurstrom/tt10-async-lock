@@ -38,15 +38,15 @@ module tt_um_torurstrom_async_lock (
   wire [1:0] acks_2;
   wire acks_3;
   
-  async_arbiter arb_0_0(acks_1[0], reqs_0[0], reqs_0[1], acks_0[0], acks_0[1], reqs_1[0]);
-  async_arbiter arb_0_1(acks_1[1], reqs_0[2], reqs_0[3], acks_0[2], acks_0[3], reqs_1[1]);
-  async_arbiter arb_0_2(acks_1[2], reqs_0[4], reqs_0[5], acks_0[4], acks_0[5], reqs_1[2]);
-  async_arbiter arb_0_3(acks_1[3], reqs_0[6], reqs_0[7], acks_0[6], acks_0[7], reqs_1[3]);
+  async_arbiter arb_0_0(VPWR, VGND, acks_1[0], reqs_0[0], reqs_0[1], acks_0[0], acks_0[1], reqs_1[0]);
+  async_arbiter arb_0_1(VPWR, VGND, acks_1[1], reqs_0[2], reqs_0[3], acks_0[2], acks_0[3], reqs_1[1]);
+  async_arbiter arb_0_2(VPWR, VGND, acks_1[2], reqs_0[4], reqs_0[5], acks_0[4], acks_0[5], reqs_1[2]);
+  async_arbiter arb_0_3(VPWR, VGND, acks_1[3], reqs_0[6], reqs_0[7], acks_0[6], acks_0[7], reqs_1[3]);
   
-  async_arbiter arb_1_0(acks_2[0], reqs_1[0], reqs_1[1], acks_1[0], acks_1[1], reqs_2[0]);
-  async_arbiter arb_1_1(acks_2[1], reqs_1[2], reqs_1[3], acks_1[2], acks_1[3], reqs_2[1]);
+  async_arbiter arb_1_0(VPWR, VGND, acks_2[0], reqs_1[0], reqs_1[1], acks_1[0], acks_1[1], reqs_2[0]);
+  async_arbiter arb_1_1(VPWR, VGND, acks_2[1], reqs_1[2], reqs_1[3], acks_1[2], acks_1[3], reqs_2[1]);
   
-  async_arbiter arb_2_0(acks_3, reqs_2[0], reqs_2[1], acks_2[0], acks_2[1], reqs_3);
+  async_arbiter arb_2_0(VPWR, VGND, acks_3, reqs_2[0], reqs_2[1], acks_2[0], acks_2[1], reqs_3);
   
   assign acks_3 = reqs_3;
 
