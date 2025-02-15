@@ -18,6 +18,6 @@ wire andabw, orabw, andyabw;
 sky130_fd_sc_hd__and2 andab(a, b, andabw);
 sky130_fd_sc_hd__or2 orab(a, b, orabw);
 sky130_fd_sc_hd__and2 andyab(y, orabw, andyabw);
-sky130_fd_sc_hd__or2(andabw, andyabw, y);
+sky130_fd_sc_hd__or2 orabyab(andabw, andyabw, y);
 
 endmodule
