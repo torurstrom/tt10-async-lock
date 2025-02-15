@@ -6,6 +6,8 @@
 `default_nettype none
 
 module tt_um_torurstrom_async_lock (
+    input  wire       VPWR,
+    input  wire       VGND,
     input  wire [7:0] ui_in,    // Dedicated inputs
     output wire [7:0] uo_out,   // Dedicated outputs
     input  wire [7:0] uio_in,   // IOs: Input path
@@ -54,6 +56,8 @@ endmodule
 
 
 module async_arbiter (
+  input VPWR,
+  input VGND,
   input ack,
   input req1,
   input req2,
@@ -68,13 +72,13 @@ wire gnt2;
 wire y1 /* synthesis keep */;
 wire y2 /* synthesis keep */;
 
-async_mutex mutex(req1, req2, gnt1, gnt2);
+async_mutex mutex(VPWR, VGND, req1, req2, gnt1, gnt2);
 
 assign y1 = gnt1 & ~ack2;
 assign y2 = gnt2 & ~ack1;
 
-c_element c_ack1(ack, y1, ack1);
-c_element c_ack2(ack, y2, ack2);
+c_element c_ack1(VPWR, VGND, ack, y1, ack1);
+c_element c_ack2(VPWR, VGND, ack, y2, ack2);
 
 assign req = y1 | y2;
 
@@ -85,6 +89,8 @@ endmodule
 
 
 module async_mutex (
+  input VPWR,
+  input VGND,
   input req1,
   input req2,
   output gnt1,
@@ -101,13 +107,13 @@ wire o2 /* synthesis keep */;
 
   sky130_fd_sc_hd__nand2_1 nand1(.A(req1), .B(o2), .Y(o1)
   `ifdef USE_POWER_PINS
-    ,.VPWR(1'b1), .VGND(1'b0), .VPB(1'b1), .VNB(1'b0)
+    ,.VPWR(VPWR), .VGND(VGND), .VPB(VPWR), .VNB(VGND)
   `endif
   );
 
   sky130_fd_sc_hd__nand2_1 nand2(.A(req2), .B(o1), .Y(o2)
   `ifdef USE_POWER_PINS
-    ,.VPWR(1'b1), .VGND(1'b0), .VPB(1'b1), .VNB(1'b0)
+    ,.VPWR(VPWR), .VGND(VGND), .VPB(VPWR), .VNB(VGND)
   `endif
   );
 
@@ -122,6 +128,8 @@ endmodule
 
 
 module c_element (
+  input VPWR,
+  input VGND,
   input a,
   input b,
   output y
@@ -134,13 +142,13 @@ module c_element (
   
   sky130_fd_sc_hd__a21o_1 and1(.A1(a), .A2(b), .B1(x), .X(y)
   `ifdef USE_POWER_PINS
-    ,.VPWR(1'b1), .VGND(1'b0), .VPB(1'b1), .VNB(1'b0)
+    ,.VPWR(VPWR), .VGND(VGND), .VPB(VPWR), .VNB(VGND)
   `endif
   );
 
   sky130_fd_sc_hd__o21a_1 or1(.A1(a), .A2(b), .B1(y), .X(x)
   `ifdef USE_POWER_PINS
-    ,.VPWR(1'b1), .VGND(1'b0), .VPB(1'b1), .VNB(1'b0)
+    ,.VPWR(VPWR), .VGND(VGND), .VPB(VPWR), .VNB(VGND)
   `endif
   );
 `endif
