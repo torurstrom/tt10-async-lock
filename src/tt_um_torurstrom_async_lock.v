@@ -6,8 +6,6 @@
 `default_nettype none
 
 module tt_um_torurstrom_async_lock (
-    input  wire       VPWR,
-    input  wire       VGND,
     input  wire [7:0] ui_in,    // Dedicated inputs
     output wire [7:0] uo_out,   // Dedicated outputs
     input  wire [7:0] uio_in,   // IOs: Input path
@@ -38,15 +36,15 @@ module tt_um_torurstrom_async_lock (
   wire [1:0] acks_2;
   wire acks_3;
   
-  async_arbiter arb_0_0(VPWR, VGND, acks_1[0], reqs_0[0], reqs_0[1], acks_0[0], acks_0[1], reqs_1[0]);
-  async_arbiter arb_0_1(VPWR, VGND, acks_1[1], reqs_0[2], reqs_0[3], acks_0[2], acks_0[3], reqs_1[1]);
-  async_arbiter arb_0_2(VPWR, VGND, acks_1[2], reqs_0[4], reqs_0[5], acks_0[4], acks_0[5], reqs_1[2]);
-  async_arbiter arb_0_3(VPWR, VGND, acks_1[3], reqs_0[6], reqs_0[7], acks_0[6], acks_0[7], reqs_1[3]);
+  async_arbiter arb_0_0(acks_1[0], reqs_0[0], reqs_0[1], acks_0[0], acks_0[1], reqs_1[0]);
+  async_arbiter arb_0_1(acks_1[1], reqs_0[2], reqs_0[3], acks_0[2], acks_0[3], reqs_1[1]);
+  async_arbiter arb_0_2(acks_1[2], reqs_0[4], reqs_0[5], acks_0[4], acks_0[5], reqs_1[2]);
+  async_arbiter arb_0_3(acks_1[3], reqs_0[6], reqs_0[7], acks_0[6], acks_0[7], reqs_1[3]);
   
-  async_arbiter arb_1_0(VPWR, VGND, acks_2[0], reqs_1[0], reqs_1[1], acks_1[0], acks_1[1], reqs_2[0]);
-  async_arbiter arb_1_1(VPWR, VGND, acks_2[1], reqs_1[2], reqs_1[3], acks_1[2], acks_1[3], reqs_2[1]);
+  async_arbiter arb_1_0(acks_2[0], reqs_1[0], reqs_1[1], acks_1[0], acks_1[1], reqs_2[0]);
+  async_arbiter arb_1_1(acks_2[1], reqs_1[2], reqs_1[3], acks_1[2], acks_1[3], reqs_2[1]);
   
-  async_arbiter arb_2_0(VPWR, VGND, acks_3, reqs_2[0], reqs_2[1], acks_2[0], acks_2[1], reqs_3);
+  async_arbiter arb_2_0(acks_3, reqs_2[0], reqs_2[1], acks_2[0], acks_2[1], reqs_3);
   
   assign acks_3 = reqs_3;
 
@@ -56,8 +54,6 @@ endmodule
 
 
 module async_arbiter (
-  input VPWR,
-  input VGND,
   input ack,
   input req1,
   input req2,
@@ -72,13 +68,13 @@ wire gnt2;
 wire y1 /* synthesis keep */;
 wire y2 /* synthesis keep */;
 
-async_mutex mutex(VPWR, VGND, req1, req2, gnt1, gnt2);
+async_mutex mutex(req1, req2, gnt1, gnt2);
 
 assign y1 = gnt1 & ~ack2;
 assign y2 = gnt2 & ~ack1;
 
-c_element c_ack1(VPWR, VGND, ack, y1, ack1);
-c_element c_ack2(VPWR, VGND, ack, y2, ack2);
+c_element c_ack1(ack, y1, ack1);
+c_element c_ack2(ack, y2, ack2);
 
 assign req = y1 | y2;
 
@@ -89,8 +85,6 @@ endmodule
 
 
 module async_mutex (
-  input VPWR,
-  input VGND,
   input req1,
   input req2,
   output gnt1,
@@ -107,13 +101,13 @@ wire o2 /* synthesis keep */;
 
   sky130_fd_sc_hd__nand2_1 nand1(.A(req1), .B(o2), .Y(o1)
   `ifdef USE_POWER_PINS
-    ,.VPWR(VPWR), .VGND(VGND), .VPB(VPWR), .VNB(VGND)
+    ,.VPWR(1'b1), .VGND(1'b0), .VPB(1'b1), .VNB(1'b0)
   `endif
   );
 
   sky130_fd_sc_hd__nand2_1 nand2(.A(req2), .B(o1), .Y(o2)
   `ifdef USE_POWER_PINS
-    ,.VPWR(VPWR), .VGND(VGND), .VPB(VPWR), .VNB(VGND)
+    ,.VPWR(1'b1), .VGND(1'b0), .VPB(1'b1), .VNB(1'b0)
   `endif
   );
 
@@ -128,8 +122,6 @@ endmodule
 
 
 module c_element (
-  input VPWR,
-  input VGND,
   input a,
   input b,
   output y
@@ -142,13 +134,13 @@ module c_element (
   
   sky130_fd_sc_hd__a21o_1 and1(.A1(a), .A2(b), .B1(x), .X(y)
   `ifdef USE_POWER_PINS
-    ,.VPWR(VPWR), .VGND(VGND), .VPB(VPWR), .VNB(VGND)
+    ,.VPWR(1'b1), .VGND(1'b0), .VPB(1'b1), .VNB(1'b0)
   `endif
   );
 
   sky130_fd_sc_hd__o21a_1 or1(.A1(a), .A2(b), .B1(y), .X(x)
   `ifdef USE_POWER_PINS
-    ,.VPWR(VPWR), .VGND(VGND), .VPB(VPWR), .VNB(VGND)
+    ,.VPWR(1'b1), .VGND(1'b0), .VPB(1'b1), .VNB(1'b0)
   `endif
   );
 `endif
