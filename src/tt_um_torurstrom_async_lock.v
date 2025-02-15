@@ -22,7 +22,7 @@ module tt_um_torurstrom_async_lock (
   assign uio_oe  = 0;
 
   // List all unused inputs to prevent warnings
-  wire _unused = &{ena, clk, rst_n, uio_in, 1'b0};
+  wire _unused = &{ena, clk, uio_in, 1'b0};
   
   assign reqs_0 = ui_in;
   
@@ -53,15 +53,15 @@ endmodule
 
 
 
-module async_arbiter (ack, req1, req2, ack1, ack2, req);
-
-input ack;
-input req1;
-input req2;
-
-output ack1 /* synthesis keep */;
-output ack2 /* synthesis keep */;
-output req /* synthesis keep */;
+module async_arbiter (
+  input rst_n,
+  input ack,
+  input req1,
+  input req2,
+  output ack1,
+  output ack2,
+  output req
+);
 
 wire gnt1;
 wire gnt2;
@@ -74,14 +74,10 @@ async_mutex mutex(req1, req2, gnt1, gnt2);
 assign y1 = gnt1 & ~ack2;
 assign y2 = gnt2 & ~ack1;
 
-// c_element c_ack1(ack, y1, ack1);
-// c_element c_ack2(ack, y2, ack2);
-// assign req = y1 | y2;
+c_element c_ack1(rst_n, ack, y1, ack1);
+c_element c_ack2(rst_n, ack, y2, ack2);
 
-
-assign req = (y1 & ~ack2) | (y2 & ~ack1);
-assign ack1 = (ack & y1) | ack1 & (ack | y1);
-assign ack2 = (ack & y2) | ack2 & (ack | y2);
+assign req = y1 | y2;
 
 
 endmodule
@@ -89,13 +85,12 @@ endmodule
 
 
 
-module async_mutex (req1, req2, gnt1, gnt2);
-
-input req1;
-input req2;
-
-output gnt1 /* synthesis keep */;
-output gnt2 /* synthesis keep */;
+module async_mutex (
+  input req1,
+  input req2,
+  output gnt1,
+  output gnt2
+);
 
 wire o1 /* synthesis keep */;
 wire o2 /* synthesis keep */;
@@ -111,40 +106,28 @@ endmodule
 
 
 
-module c_element (a, b, y);
-
-input a;
-input b;
-
-output y /* synthesis keep */;
+module c_element (
+  input rst_n,
+  input a,
+  input b,
+  output y
+);
 
 `ifdef TEST
   assign y = (a & b) | (y & (a | b));
 `else
-  wire andabw, orabw, andyabw;
-
-  sky130_fd_sc_hd__and2_1 andab(.A(a), .B(b), .X(andabw)
-  `ifdef USE_POWER_PINS
-    ,.VPWR(1'b1), .VGND(1'b0), .VPB(1'b1), .VNB(1'b0)
-  `endif
+  wire x;
+  
+  sky130_fd_sc_hd__o21a_1 i1(.A1(a & b), .A2(x), .B1(rst_n), .X(y)
+  // `ifdef USE_POWER_PINS
+    // ,.VPWR(1'b1), .VGND(1'b0), .VPB(1'b1), .VNB(1'b0)
+  // `endif
   );
 
-  sky130_fd_sc_hd__or2_1 orab(.A(a), .B(b), .X(orabw)
-  `ifdef USE_POWER_PINS
-    ,.VPWR(1'b1), .VGND(1'b0), .VPB(1'b1), .VNB(1'b0)
-  `endif
-  );
-
-  sky130_fd_sc_hd__and2_1 andyab(.A(y), .B(orabw), .X(andyabw)
-  `ifdef USE_POWER_PINS
-    ,.VPWR(1'b1), .VGND(1'b0), .VPB(1'b1), .VNB(1'b0)
-  `endif
-  );
-
-  sky130_fd_sc_hd__or2_1 orabyab(.A(andabw), .B(andyabw), .X(y)
-  `ifdef USE_POWER_PINS
-    ,.VPWR(1'b1), .VGND(1'b0), .VPB(1'b1), .VNB(1'b0)
-  `endif
+  sky130_fd_sc_hd__o21a_1 i2(.A1(a), .A2(b), .B1(y), .X(x)
+  // `ifdef USE_POWER_PINS
+    // ,.VPWR(1'b1), .VGND(1'b0), .VPB(1'b1), .VNB(1'b0)
+  // `endif
   );
 `endif
 
