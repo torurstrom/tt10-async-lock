@@ -5,7 +5,7 @@
 SIM ?= icarus
 TOPLEVEL_LANG ?= verilog
 SRC_DIR = $(PWD)/../src
-PROJECT_SOURCES = tt_um_torurstrom_async_lock.v async_arbiter.v async_mutex.v c_element.v
+PROJECT_SOURCES = tt_um_torurstrom_async_lock.v
 
 ifneq ($(GATES),yes)
 

@@ -49,3 +49,75 @@ module tt_um_torurstrom_async_lock (
   assign acks_3 = reqs_3;
 
 endmodule
+
+
+
+
+module async_arbiter (ack, req1, req2, ack1, ack2, req);
+
+input ack;
+input req1;
+input req2;
+
+output ack1 /* synthesis keep */;
+output ack2 /* synthesis keep */;
+output req /* synthesis keep */;
+
+wire gnt1;
+wire gnt2;
+
+wire y1 /* synthesis keep */;
+wire y2 /* synthesis keep */;
+
+async_mutex mutex(req1, req2, gnt1, gnt2);
+
+assign y1 = gnt1 & ~ack2;
+assign y2 = gnt2 & ~ack1;
+
+c_element c_ack1(ack, y1, ack1);
+c_element c_ack2(ack, y2, ack2);
+
+assign req = y1 | y2;
+
+endmodule
+
+
+
+
+module async_mutex (req1, req2, gnt1, gnt2);
+
+input req1;
+input req2;
+
+output gnt1 /* synthesis keep */;
+output gnt2 /* synthesis keep */;
+
+wire o1 /* synthesis keep */;
+wire o2 /* synthesis keep */;
+
+assign o1 = ~(req1 & o2);
+assign o2 = ~(req2 & o1);
+
+assign gnt1 = ~o1 & o2;
+assign gnt2 = ~o2 & o1;
+
+endmodule
+
+
+
+
+module c_element (a, b, y);
+
+input a;
+input b;
+
+output y /* synthesis keep */;
+
+//assign y = (a & b) | (y & (a | b));
+wire andabw, orabw, andyabw;
+sky130_fd_sc_hd__and2 andab(a, b, andabw);
+sky130_fd_sc_hd__or2 orab(a, b, orabw);
+sky130_fd_sc_hd__and2 andyab(y, orabw, andyabw);
+sky130_fd_sc_hd__or2 orabyab(andabw, andyabw, y);
+
+endmodule
