@@ -119,15 +119,15 @@ module c_element (
   wire x;
   
   sky130_fd_sc_hd__o21a_1 i1(.A1(a & b), .A2(x), .B1(rst_n), .X(y)
-  // `ifdef USE_POWER_PINS
-    // ,.VPWR(1'b1), .VGND(1'b0), .VPB(1'b1), .VNB(1'b0)
-  // `endif
+  `ifdef USE_POWER_PINS
+    ,.VPWR(1'b1), .VGND(1'b0), .VPB(1'b1), .VNB(1'b0)
+  `endif
   );
 
   sky130_fd_sc_hd__o21a_1 i2(.A1(a), .A2(b), .B1(y), .X(x)
-  // `ifdef USE_POWER_PINS
-    // ,.VPWR(1'b1), .VGND(1'b0), .VPB(1'b1), .VNB(1'b0)
-  // `endif
+  `ifdef USE_POWER_PINS
+    ,.VPWR(1'b1), .VGND(1'b0), .VPB(1'b1), .VNB(1'b0)
+  `endif
   );
 `endif
 
