@@ -74,10 +74,15 @@ async_mutex mutex(req1, req2, gnt1, gnt2);
 assign y1 = gnt1 & ~ack2;
 assign y2 = gnt2 & ~ack1;
 
-c_element c_ack1(ack, y1, ack1);
-c_element c_ack2(ack, y2, ack2);
+// c_element c_ack1(ack, y1, ack1);
+// c_element c_ack2(ack, y2, ack2);
+// assign req = y1 | y2;
 
-assign req = y1 | y2;
+
+assign req = (y1 & ~ack2) | (y2 & ~ack1);
+assign ack1 = (ack & y1) | ack1 & (ack | y1);
+assign ack2 = (ack & y2) | ack2 & (ack | y2);
+
 
 endmodule
 
