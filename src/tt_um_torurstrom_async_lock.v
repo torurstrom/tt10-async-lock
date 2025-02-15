@@ -117,10 +117,30 @@ output y /* synthesis keep */;
   assign y = (a & b) | (y & (a | b));
 `else
   wire andabw, orabw, andyabw;
-  sky130_fd_sc_hd__and2_1 andab(.A(a), .B(b), .X(andabw));
-  sky130_fd_sc_hd__or2_1 orab(.A(a), .B(b), .X(orabw));
-  sky130_fd_sc_hd__and2_1 andyab(.A(y), .B(orabw), .X(andyabw));
-  sky130_fd_sc_hd__or2_1 orabyab(.A(andabw), .B(andyabw), .X(y));
+
+  sky130_fd_sc_hd__and2_1 andab(.A(a), .B(b), .X(andabw)
+  `ifdef USE_POWER_PINS
+    ,.VPWR(1'b1), .VGND(1'b0), .VPB(1'b1), .VNB(1'b0)
+  `endif
+  );
+
+  sky130_fd_sc_hd__or2_1 orab(.A(a), .B(b), .X(orabw)
+  `ifdef USE_POWER_PINS
+    ,.VPWR(1'b1), .VGND(1'b0), .VPB(1'b1), .VNB(1'b0)
+  `endif
+  );
+
+  sky130_fd_sc_hd__and2_1 andyab(.A(y), .B(orabw), .X(andyabw)
+  `ifdef USE_POWER_PINS
+    ,.VPWR(1'b1), .VGND(1'b0), .VPB(1'b1), .VNB(1'b0)
+  `endif
+  );
+
+  sky130_fd_sc_hd__or2_1 orabyab(.A(andabw), .B(andyabw), .X(y)
+  `ifdef USE_POWER_PINS
+    ,.VPWR(1'b1), .VGND(1'b0), .VPB(1'b1), .VNB(1'b0)
+  `endif
+  );
 `endif
 
 
