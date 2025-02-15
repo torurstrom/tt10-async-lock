@@ -95,13 +95,13 @@ module async_mutex (
 wire o1 /* synthesis keep */;
 wire o2 /* synthesis keep */;
 
-sky130_fd_sc_hd__nand2_1 n1(.A(req1), B.(o2), .Y(o1)
+sky130_fd_sc_hd__nand2_1 mod1(.A(req1), B.(o2), .Y(o1)
 // `ifdef USE_POWER_PINS
   // ,.VPWR(1'b1), .VGND(1'b0), .VPB(1'b1), .VNB(1'b0)
 // `endif
 );
 
-sky130_fd_sc_hd__nand2_1 n2(.A(req2), B.(o1), .Y(o2)
+sky130_fd_sc_hd__nand2_1 mod2(.A(req2), B.(o1), .Y(o2)
 // `ifdef USE_POWER_PINS
   // ,.VPWR(1'b1), .VGND(1'b0), .VPB(1'b1), .VNB(1'b0)
 // `endif
@@ -127,13 +127,13 @@ module c_element (
 `else
   wire x;
   
-  sky130_fd_sc_hd__o21a_1 o1(.A1(a & b), .A2(x), .B1(rst_n), .X(y)
+  sky130_fd_sc_hd__o21a_1 mod1(.A1(a & b), .A2(x), .B1(rst_n), .X(y)
   `ifdef USE_POWER_PINS
     ,.VPWR(1'b1), .VGND(1'b0), .VPB(1'b1), .VNB(1'b0)
   `endif
   );
 
-  sky130_fd_sc_hd__o21a_1 o2(.A1(a), .A2(b), .B1(y), .X(x)
+  sky130_fd_sc_hd__o21a_1 mod2(.A1(a), .A2(b), .B1(y), .X(x)
   `ifdef USE_POWER_PINS
     ,.VPWR(1'b1), .VGND(1'b0), .VPB(1'b1), .VNB(1'b0)
   `endif
