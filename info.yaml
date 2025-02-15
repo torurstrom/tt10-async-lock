@@ -2,8 +2,8 @@
 project:
   title:        "Asynchronous Locking Unit"      # Project title
   author:       "Tórur Biskopstø Strøm"      # Your name
-  discord:      ""      # Your discord username, for communication and automatically assigning you a Tapeout role (optional)
-  description:  "An asynchronous mutex with 8 request pins and 8 grant pins"      # One line description of what your project does
+  discord:      "torurstrom"      # Your discord username, for communication and automatically assigning you a Tapeout role (optional)
+  description:  "An asynchronous lock with 8 request signals and 8 grant signals"      # One line description of what your project does
   language:     "Verilog" # other examples include SystemVerilog, Amaranth, VHDL, etc
   clock_hz:     0       # Clock frequency in Hz (or 0 if not applicable)
 
