@@ -95,8 +95,17 @@ module async_mutex (
 wire o1 /* synthesis keep */;
 wire o2 /* synthesis keep */;
 
-assign o1 = ~(req1 & o2);
-assign o2 = ~(req2 & o1);
+sky130_fd_sc_hd__nand2_1 nand1(.A(req1), B.(o2), .Y(o1)
+`ifdef USE_POWER_PINS
+  ,.VPWR(1'b1), .VGND(1'b0), .VPB(1'b1), .VNB(1'b0)
+`endif
+);
+
+sky130_fd_sc_hd__nand2_1 nand2(.A(req2), B.(o1), .Y(o2)
+`ifdef USE_POWER_PINS
+  ,.VPWR(1'b1), .VGND(1'b0), .VPB(1'b1), .VNB(1'b0)
+`endif
+);
 
 assign gnt1 = ~o1 & o2;
 assign gnt2 = ~o2 & o1;
