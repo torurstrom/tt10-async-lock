@@ -96,15 +96,15 @@ wire o1 /* synthesis keep */;
 wire o2 /* synthesis keep */;
 
 sky130_fd_sc_hd__nand2_1 n1(.A(req1), B.(o2), .Y(o1)
-`ifdef USE_POWER_PINS
-  ,.VPWR(1'b1), .VGND(1'b0), .VPB(1'b1), .VNB(1'b0)
-`endif
+// `ifdef USE_POWER_PINS
+  // ,.VPWR(1'b1), .VGND(1'b0), .VPB(1'b1), .VNB(1'b0)
+// `endif
 );
 
 sky130_fd_sc_hd__nand2_1 n2(.A(req2), B.(o1), .Y(o2)
-`ifdef USE_POWER_PINS
-  ,.VPWR(1'b1), .VGND(1'b0), .VPB(1'b1), .VNB(1'b0)
-`endif
+// `ifdef USE_POWER_PINS
+  // ,.VPWR(1'b1), .VGND(1'b0), .VPB(1'b1), .VNB(1'b0)
+// `endif
 );
 
 assign gnt1 = ~o1 & o2;
